@@ -13,9 +13,13 @@ import { from, Observable } from 'rxjs';
 })
 export class InventoryComponent {
   products: any[] = [];
+  category: string[] = [];
+
 
   ngOnInit(): void {
-    this.fetchProducts();
+    this.fetchProducts().subscribe(() => {
+      this.filtercat();
+    });
   }
 
   // async fetchProducts(): Promise<void> {
@@ -29,9 +33,18 @@ export class InventoryComponent {
   fetchProducts(): Observable<any> {
     return from(axios.get('http://localhost:3000/products').then(response => {
       this.products = response.data;
+      
       return response.data;
     }));
   }
+
+  filtercat(): void {
+    // Extract unique categories from products
+    const uniqueCategories = [...new Set(this.products.map(product => product.category))];
+    this.category = uniqueCategories.filter(Boolean); // Remove any undefined or null values
+    console.log("cat",this.category);
+  }
+  
 
   toggleDropdown(): void {
     const dropdown = document.getElementById('actionsDropdown');
