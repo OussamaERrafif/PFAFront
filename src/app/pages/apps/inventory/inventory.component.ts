@@ -14,6 +14,14 @@ import { from, Observable } from 'rxjs';
 export class InventoryComponent {
   products: any[] = [];
   category: string[] = [];
+  searchText: string = '';
+  product: any = {
+    name: '',
+    brand: '',
+    price: null,
+    category: '',
+    quantity: null
+  };
 
 
   ngOnInit(): void {
@@ -21,15 +29,6 @@ export class InventoryComponent {
       this.filtercat();
     });
   }
-
-  // async fetchProducts(): Promise<void> {
-  //   try {
-  //     const response = await axios.get('http://localhost:3000/products');
-  //     this.products = response.data;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
   fetchProducts(): Observable<any> {
     return from(axios.get('http://localhost:3000/products').then(response => {
       this.products = response.data;
@@ -39,9 +38,8 @@ export class InventoryComponent {
   }
 
   filtercat(): void {
-    // Extract unique categories from products
-    const uniqueCategories = [...new Set(this.products.map(product => product.category))];
-    this.category = uniqueCategories.filter(Boolean); // Remove any undefined or null values
+    const uniqueCategories = [...new Set(this.products.map(product => product.category))]; // Get unique categories
+    this.category = uniqueCategories.filter(Boolean); // Remove empty categories
     console.log("cat",this.category);
   }
   
