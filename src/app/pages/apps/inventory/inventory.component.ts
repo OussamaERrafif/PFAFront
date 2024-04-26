@@ -2,17 +2,29 @@ import { Component  } from '@angular/core';
 import axios from 'axios';
 import { NgFor  } from '@angular/common';
 import { from, Observable } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { SearchPipe } from "./search.pipe";
 
 
 @Component({
-  selector: 'app-inventory',
-  standalone: true,
-  imports: [NgFor],
-  templateUrl: './inventory.component.html',
-  styleUrl: './inventory.component.css',
+    selector: 'app-inventory',
+    standalone: true,
+    templateUrl: './inventory.component.html',
+    styleUrl: './inventory.component.css',
+    imports: [NgFor, FormsModule, SearchPipe]
 })
 export class InventoryComponent {
   products: any[] = [];
+  searchText: string = '';
+  product: any = {
+    name: '',
+    brand: '',
+    price: null,
+    category: '',
+    quantity: null
+  };
+
+
 
   ngOnInit(): void {
     this.fetchProducts();
@@ -32,6 +44,18 @@ export class InventoryComponent {
       return response.data;
     }));
   }
+
+  addProduct(product: any) {
+    axios.post('http://localhost:3000/products/create', product)
+      .then(response => {
+        console.log('Product added successfully:', response.data);
+        this.fetchProducts(); // Met à jour la liste des produits après l'ajout
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+      });
+  }
+
 
   toggleDropdown(): void {
     const dropdown = document.getElementById('actionsDropdown');
@@ -69,14 +93,16 @@ export class InventoryComponent {
       modal.setAttribute('aria-hidden', 'true');
     }
   }
-  toggleDropdown1(): void {
-    const dropdown = document.getElementById('product-dropdown');
+  toggleDropdown1(index: number): void {
+    const dropdown = document.getElementById('product-dropdown-' + index);
     if (dropdown !== null && dropdown.classList.contains('hidden')) {
       dropdown.classList.remove('hidden');
     } else if (dropdown !== null) {
       dropdown.classList.add('hidden');
     }
   }
+
+
   // Fonction pour afficher ou masquer le modal
   toggleModalEdit(): void {
     const modal = document.getElementById('updateProductModal');
