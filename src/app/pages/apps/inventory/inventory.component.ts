@@ -36,6 +36,17 @@ export class InventoryComponent {
       return response.data;
     }));
   }
+  
+  addProduct(product: any) {
+    axios.post('http://localhost:3000/products/create', product)
+      .then(response => {
+        console.log('Product added successfully:', response.data);
+        this.fetchProducts(); // Met à jour la liste des produits après l'ajout
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+      });
+  }
 
   filtercat(): void {
     const uniqueCategories = [...new Set(this.products.map(product => product.category))]; // Get unique categories
