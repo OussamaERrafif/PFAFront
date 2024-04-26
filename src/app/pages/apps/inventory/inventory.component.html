@@ -37,6 +37,8 @@
                   id="simple-search"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Search"
+                  [(ngModel)]="searchText"
+                  [ngModelOptions]="{ standalone: true }"
                   required=""
                 />
               </div>
@@ -160,8 +162,14 @@
                 >
                   Category
                 </h6>
-                <ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
-                  <li class="flex items-center" *ngFor="let category of category">
+                <ul
+                  class="space-y-2 text-sm"
+                  aria-labelledby="filterDropdownButton"
+                >
+                  <li
+                    class="flex items-center"
+                    *ngFor="let category of category"
+                  >
                     <input
                       [id]="category"
                       type="checkbox"
@@ -173,7 +181,7 @@
                       class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
                     >
                       {{ category }}
-                  </label>
+                    </label>
                   </li>
                 </ul>
               </div>
@@ -201,10 +209,13 @@
             </thead>
             <tbody>
               <tr
-                *ngFor="let product of products | search: searchText; let i = index"
+                *ngFor="
+                  let product of products | search : searchText;
+                  let i = index
+                "
                 class="border-b dark:border-gray-700"
               >
-              <td class="px-4 py-3">{{ i }}</td>
+                <td class="px-4 py-3">{{ i }}</td>
                 <th
                   scope="row"
                   class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -219,8 +230,8 @@
                 <td class="px-4 py-3">{{ product.price }}</td>
                 <td class="px-4 py-3 flex items-center justify-end">
                   <button
-                    id="{{ 'dropdown-button-' + product.id }}"
-                    (click)="toggleDropdown()"
+                    id="{{ 'dropdown-button-' + i }}"
+                    (click)="toggleDropdown1(i)"
                     class="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
                     type="button"
                   >
@@ -237,13 +248,16 @@
                     </svg>
                   </button>
                   <div
-                    id="{{ 'dropdown-' + product.id }}"
-                    class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+                    id="{{ 'product-dropdown-' + i }}"
+                    class="hidden absolute z-10 w-44 mr-20 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 transform translate-x-1/2"
+                    style="right: 60px"
                   >
+                    >
                     <ul class="py-1 text-sm">
                       <li>
                         <button
                           type="button"
+                          (click)="toggleModalEdit()"
                           data-modal-target="updateProductModal"
                           data-modal-toggle="updateProductModal"
                           class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-gray-700 dark:text-gray-200"
@@ -294,6 +308,7 @@
                       <li>
                         <button
                           type="button"
+                          (click)="toggleModalDelete()"
                           data-modal-target="deleteModal"
                           data-modal-toggle="deleteModal"
                           class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400"
@@ -415,147 +430,146 @@
   aria-hidden="true"
   class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
 >
-<div class="relative p-4 w-full max-w-2xl">
-  <!-- Modal content -->
-  <div
-    class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5"
-  >
-    <!-- Modal header -->
+  <div class="relative p-4 w-full max-w-2xl">
+    <!-- Modal content -->
     <div
-      class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
+      class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5"
     >
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-        Add Product
-      </h3>
-      <button
-        type="button"
-        (click)="closeModal()"
-        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-        data-modal-target="createProductModal"
-        data-modal-toggle="createProductModal"
+      <!-- Modal header -->
+      <div
+        class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
       >
-        <svg
-          aria-hidden="true"
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+          Add Product
+        </h3>
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          data-modal-target="createProductModal"
+          data-modal-toggle="createProductModal"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          ></path>
-        </svg>
-        <span class="sr-only">Close modal</span>
-      </button>
-    </div>
-    <!-- Modal body -->
-    <form (submit)="addProduct(product)">
-      <div class="grid gap-4 mb-4 sm:grid-cols-2">
-        <div>
-          <label
-            for="name"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Name</label
+          <svg
+            aria-hidden="true"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-          <input
-            type="text"
-            name="name"
-            id="name"
-            [(ngModel)]="product.name"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-            placeholder="Type product name"
-            required=""
-          />
-        </div>
-        <div>
-          <label
-            for="brand"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Brand</label
-          >
-          <input
-            type="text"
-            name="brand"
-            id="brand"
-            [(ngModel)]="product.brand"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-            placeholder="Product brand"
-            required=""
-          />
-        </div>
-        <div>
-          <label
-            for="price"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Price</label
-          >
-          <input
-            type="number"
-            name="price"
-            id="price"
-            [(ngModel)]="product.price"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-            placeholder="$2999"
-            required=""
-          />
-        </div>
-        <div>
-          <label
-            for="category"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Category</label
-          ><input
-          type="text"
-          name="category"
-          id="category"
-          [(ngModel)]="product.category"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Product category"
-          required=""
-        />
-        </div>
-        <div class="sm:col-span-2">
-          <label
-            for="description"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Quantity</label
-          ><input
-          type="number"
-          name="price"
-          id="price"
-          [(ngModel)]="product.quantity"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="$2999"
-          required=""
-        />
-        </div>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
       </div>
-      <button
-        type="submit"
-
-        class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-      >
-        <svg
-          class="mr-1 -ml-1 w-6 h-6"
-          fill="currentColor"
-          viewbox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
+      <!-- Modal body -->
+      <form (submit)="addProduct(product)">
+        <div class="grid gap-4 mb-4 sm:grid-cols-2">
+          <div>
+            <label
+              for="name"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Name</label
+            >
+            <input
+              type="text"
+              name="name"
+              id="name"
+              [(ngModel)]="product.name"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Type product name"
+              required=""
+            />
+          </div>
+          <div>
+            <label
+              for="brand"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Brand</label
+            >
+            <input
+              type="text"
+              name="brand"
+              id="brand"
+              [(ngModel)]="product.brand"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Product brand"
+              required=""
+            />
+          </div>
+          <div>
+            <label
+              for="price"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Price</label
+            >
+            <input
+              type="number"
+              name="price"
+              id="price"
+              [(ngModel)]="product.price"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="$2999"
+              required=""
+            />
+          </div>
+          <div>
+            <label
+              for="category"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Category</label
+            ><input
+              type="text"
+              name="category"
+              id="category"
+              [(ngModel)]="product.category"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Product category"
+              required=""
+            />
+          </div>
+          <div class="sm:col-span-2">
+            <label
+              for="description"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Quantity</label
+            ><input
+              type="number"
+              name="price"
+              id="price"
+              [(ngModel)]="product.quantity"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="$2999"
+              required=""
+            />
+          </div>
+        </div>
+        <button
+          type="submit"
+          class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
-          <path
-            fill-rule="evenodd"
-            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        Add new product
-      </button>
-    </form>
+          <svg
+            class="mr-1 -ml-1 w-6 h-6"
+            fill="currentColor"
+            viewbox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Add new product
+        </button>
+      </form>
+    </div>
   </div>
-</div>
 </div>
 <!-- Update modal -->
 <div
@@ -651,30 +665,30 @@
               for="category"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >Category</label
-            ><select
+            ><input
+              type="text"
+              name="category"
               id="category"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-            >
-              <option selected="">Electronics</option>
-              <option value="TV">TV/Monitors</option>
-              <option value="PC">PC</option>
-              <option value="GA">Gaming/Console</option>
-              <option value="PH">Phones</option>
-            </select>
+              [(ngModel)]="product.category"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Product category"
+              required=""
+            />
           </div>
           <div class="sm:col-span-2">
             <label
-              for="description"
+              for="quantity"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Description</label
-            ><textarea
-              id="description"
-              rows="5"
-              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Write a description..."
-            >
-Standard glass, 3.8GHz 8-core 10th-generation Intel Core i7 processor, Turbo Boost up to 5.0GHz, 16GB 2666MHz DDR4 memory, Radeon Pro 5500 XT with 8GB of GDDR6 memory, 256GB SSD storage, Gigabit Ethernet, Magic Mouse 2, Magic Keyboard - US</textarea
-            >
+              >Quantity</label
+            ><input
+              type="number"
+              name="price"
+              id="price"
+              [(ngModel)]="product.quantity"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="$2999"
+              required=""
+            />
           </div>
         </div>
         <div class="flex items-center space-x-4">
