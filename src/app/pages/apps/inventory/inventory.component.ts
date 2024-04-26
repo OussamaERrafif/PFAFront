@@ -24,6 +24,9 @@ export class InventoryComponent {
     quantity: null
   };
 
+  selectedProductId: any;
+  selectedProductName: string = '';
+
 
 
   ngOnInit(): void {
@@ -49,12 +52,48 @@ export class InventoryComponent {
     axios.post('http://localhost:3000/products/create', product)
       .then(response => {
         console.log('Product added successfully:', response.data);
-        this.fetchProducts(); // Met à jour la liste des produits après l'ajout
+        this.fetchProducts();
       })
       .catch(error => {
         console.error('Error adding product:', error);
       });
   }
+
+  loadProductDetails(productId: any) {
+    this.selectedProductId = productId;
+    this.selectedProductName = this.products.find(product => product.id === productId).name;
+
+    axios.get(`http://localhost:3000/products/${productId}`)
+      .then(response => {
+        this.product = response.data;
+      })
+      .catch(error => {
+        console.error('Error fetching product details:', error);
+      });
+  }
+  updateProduct() {
+    console.log('Product updated:', this.selectedProductId, this.product);
+
+    axios.put(`http://localhost:3000/products/${this.selectedProductId}`, this.product)
+      .then(response => {
+        console.log('Product updated successfully:', response.data);
+      })
+      .catch(error => {
+        console.error('Error updating product:', error);
+      });
+  }
+  deleteProduct(): void {
+    axios.delete(`http://localhost:3000/products/${this.selectedProductId}`, this.product)
+      .then(response => {
+        console.log('Product deleted successfully:', response.data);
+        this.fetchProducts();
+      })
+      .catch(error => {
+        console.error('Error deleting product:', error);
+
+      });
+  }
+
 
 
   toggleDropdown(): void {
