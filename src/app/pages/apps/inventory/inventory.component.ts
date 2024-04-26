@@ -4,11 +4,12 @@ import { NgFor  } from '@angular/common';
 import { from, Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { SearchPipe } from "./search.pipe";
+import { ReadModalComponent } from './Modals/ReadModals/ReadModal/ReadModal.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [NgFor,FormsModule,SearchPipe],
+  imports: [NgFor,FormsModule,SearchPipe,ReadModalComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css',
 })
@@ -132,13 +133,7 @@ export class InventoryComponent {
     }
   }
   // Fonction pour fermer le modal
-  closeModalRead(): void {
-    const modal = document.getElementById('readProductModal');
-    if (modal !== null) {
-      modal.classList.add('hidden');
-      modal.setAttribute('aria-hidden', 'true');
-    }
-  }
+  
 
   // Fonction pour afficher ou masquer le modal
   toggleModalDelete(): void {
