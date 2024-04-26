@@ -2,12 +2,13 @@ import { Component  } from '@angular/core';
 import axios from 'axios';
 import { NgFor  } from '@angular/common';
 import { from, Observable } from 'rxjs';
-
+import { FormsModule } from '@angular/forms';
+import { SearchPipe } from "./search.pipe";
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [NgFor],
+  imports: [NgFor,FormsModule,SearchPipe],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css',
 })
