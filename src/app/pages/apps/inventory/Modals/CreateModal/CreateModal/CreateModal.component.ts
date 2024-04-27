@@ -183,7 +183,7 @@ export class CreateModalComponent {
   fetchProducts(): Observable<any> {
     return from(axios.get('http://localhost:3000/products').then(response => {
       this.product = response.data;
-      
+
       return response.data;
     }));
   }
@@ -191,11 +191,11 @@ export class CreateModalComponent {
     axios.post('http://localhost:3000/products/create', product)
       .then(response => {
         console.log('Product added successfully:', response.data);
-        this.fetchProducts(); // Met à jour la liste des produits après l'ajout
+        this.fetchProducts();
       })
       .catch(error => {
         console.error('Error adding product:', error);
       });
   }
-  
+
 }

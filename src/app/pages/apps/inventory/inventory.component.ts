@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { SearchPipe } from './search.pipe';
 import { ReadModalComponent } from './Modals/ReadModals/ReadModal/ReadModal.component';
 
+
+
 @Component({
   selector: 'app-inventory',
   standalone: true,
@@ -18,19 +20,21 @@ export class InventoryComponent {
   category: string[] = [];
   searchText: string = '';
   product: any = {
+    id: null,
     name: '',
     brand: '',
     price: null,
     category: '',
     quantity: null,
   };
-  selectedProductId: any;
-  selectedProductName: string = '';
+
+
 
   ngOnInit(): void {
     this.fetchProducts().subscribe(() => {
       this.filtercat();
     });
+
   }
   fetchProducts(): Observable<any> {
     return from(
@@ -47,7 +51,12 @@ export class InventoryComponent {
       .post('http://localhost:3000/products/create', product)
       .then((response) => {
         console.log('Product added successfully:', response.data);
-        this.fetchProducts(); // Met à jour la liste des produits après l'ajout
+        const modal = document.getElementById('createProductModal');
+        if (modal !== null) {
+          modal.classList.add('hidden');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+        this.fetchProducts();
       })
       .catch((error) => {
         console.error('Error adding product:', error);
@@ -61,44 +70,46 @@ export class InventoryComponent {
     this.category = uniqueCategories.filter(Boolean); // Remove empty categories
     console.log('cat', this.category);
   }
-  loadProductDetails(productId: any) {
-    this.selectedProductId = productId;
-    this.selectedProductName = this.products.find(
-      (product) => product.id === productId
-    ).name;
 
-    axios
-      .get(`http://localhost:3000/products/${productId}`)
-      .then((response) => {
-        this.product = response.data;
-      })
-      .catch((error) => {
-        console.error('Error fetching product details:', error);
-      });
+  getProductById(id: number): void {
+    console.log('id', id);
+    this.getById(id);
+
   }
-  updateProduct() {
-    console.log('Product updated:', this.selectedProductId, this.product);
 
+  getById(id: number): void {
+    axios.get<any>(`http://localhost:3000/products/${id}`).then((response) => {
+
+      if (response.status === 200) {
+       console.log('response', response.data);
+        this.product = response.data;
+      } else {
+        console.error('Error fetching product data');
+      }
+    }).catch((error) => {
+      console.error('Error fetching product data:', error);
+    });
+  }
+  updateProduct(product: any) {
     axios
-      .put(
-        `http://localhost:3000/products/${this.selectedProductId}`,
-        this.product
-      )
+      .put(`http://localhost:3000/products/${product.id}`, product)
       .then((response) => {
         console.log('Product updated successfully:', response.data);
+        this.hideModal('updateProductModal');
+        this.fetchProducts();
+
       })
       .catch((error) => {
         console.error('Error updating product:', error);
       });
   }
-  deleteProduct(): void {
+
+  deleteProduct(id: any) {
     axios
-      .delete(
-        `http://localhost:3000/products/${this.selectedProductId}`,
-        this.product
-      )
+      .delete(`http://localhost:3000/products/${id}`, id)
       .then((response) => {
         console.log('Product deleted successfully:', response.data);
+        this.hideModal('deleteProductModal');
         this.fetchProducts();
       })
       .catch((error) => {
@@ -135,6 +146,27 @@ export class InventoryComponent {
   toggleModal(): void {
     const modal = document.getElementById('createProductModal');
     if (modal !== null && modal.classList.contains('hidden')) {
+      const nameModal = document.getElementById('cname') as HTMLInputElement;
+      const brandModal = document.getElementById('cbrand')as HTMLInputElement;
+      const priceModal = document.getElementById('cprice')as HTMLInputElement;
+      const categoryModal = document.getElementById('ccategory')as HTMLInputElement;
+      const quantityModal = document.getElementById('cquantity')as HTMLInputElement;
+      if (nameModal !== null) {
+        nameModal.value = '';
+      }
+      if (brandModal !== null) {
+        brandModal.value = '';
+      }
+      if (priceModal !== null) {
+        priceModal.value = '';
+      }
+      if (categoryModal !== null) {
+        categoryModal.value = '';
+      }
+      if (quantityModal !== null) {
+        quantityModal.value = '';
+      }
+
       modal.classList.remove('hidden');
       modal.setAttribute('aria-hidden', 'false');
     } else if (modal !== null) {
@@ -185,7 +217,7 @@ export class InventoryComponent {
 
   // Fonction pour afficher ou masquer le modal
   toggleModalDelete(): void {
-    const modal = document.getElementById('deleteModal');
+    const modal = document.getElementById('deleteProductModal');
     if (modal !== null && modal.classList.contains('hidden')) {
       modal.classList.remove('hidden');
       modal.setAttribute('aria-hidden', 'false');
@@ -196,7 +228,15 @@ export class InventoryComponent {
   }
   // Fonction pour fermer le modal
   closeModalDelete(): void {
-    const modal = document.getElementById('deleteModal');
+    const modal = document.getElementById('deleteProductModal');
+    if (modal !== null) {
+      modal.classList.add('hidden');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  hideModal(modalId: string): void {
+    const modal = document.getElementById(modalId);
     if (modal !== null) {
       modal.classList.add('hidden');
       modal.setAttribute('aria-hidden', 'true');
