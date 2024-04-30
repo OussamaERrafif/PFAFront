@@ -70,52 +70,14 @@
             </button>
 
             <div class="relative flex items-center space-x-3 w-full md:w-auto">
-              <button
-                id="actionsDropdownButton"
-                (click)="toggleDropdown()"
-                data-dropdown-toggle="actionsDropdown"
-                class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                type="button"
-              >
-                <svg
-                  class="-ml-1 mr-1.5 w-5 h-5"
-                  fill="currentColor"
-                  viewbox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    clip-rule="evenodd"
-                    fill-rule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  />
-                </svg>
-                Actions
-              </button>
+
+
               <div
                 id="actionsDropdown"
                 class="absolute hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
                 style="top: 100%"
               >
-                <ul
-                  class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="actionsDropdownButton"
-                >
-                  <li>
-                    <a
-                      href="#"
-                      class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >Mass Edit</a
-                    >
-                  </li>
-                </ul>
-                <div class="py-1">
-                  <a
-                    href="#"
-                    class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                    >Delete all</a
-                  >
-                </div>
+
               </div>
               <button
                 id="filterDropdownButton"
@@ -155,10 +117,10 @@
               <div
                 id="filterDropdown"
                 class="absolute z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
-                style="top: 100%"
+                style="top: 100%; right: 0px"
               >
                 <h6
-                  class="mb-3 text-sm font-medium text-gray-900 dark:text-white"
+                  class="mb-3  text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Category
                 </h6>
@@ -175,7 +137,7 @@
                       type="checkbox"
                       value=""
                       class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                    />
+                      (click)="toggleFilter(category)" [checked]="isCategoryFiltered(category)"/>
                     <label
                       [for]="category"
                       class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
@@ -210,12 +172,12 @@
             <tbody>
               <tr
                 *ngFor="
-                  let product of products | search : searchText;
+                  let product of products | search : searchText | paginate: { itemsPerPage: tableSize, currentPage: page, totalItems: count}
                   let i = index
                 "
                 class="border-b dark:border-gray-700"
               >
-                <td class="px-4 py-3">{{ i }}</td>
+                <td class="px-4 py-3">{{ product.id }}</td>
                 <th
                   scope="row"
                   class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -288,32 +250,6 @@
                       <li>
                         <button
                           type="button"
-                          (click)="toggleModalRead()"
-                          (click)="hideModal('product-dropdown-' + i)"
-                          data-modal-target="readProductModal"
-                          data-modal-toggle="readProductModal"
-                          class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-gray-700 dark:text-gray-200"
-                        >
-                          <svg
-                            class="w-4 h-4 mr-2"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewbox="0 0 20 20"
-                            fill="currentColor"
-                            aria-hidden="true"
-                          >
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                            />
-                          </svg>
-                          Preview
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          type="button"
                           (click)="toggleModalDelete()"
                           (click)="getProductById(product.id)"
                           (click)="hideModal('product-dropdown-' + i)"
@@ -351,80 +287,18 @@
           aria-label="Table navigation"
         >
           <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-            Showing
-            <span class="font-semibold text-gray-900 dark:text-white"
-              >1-10</span
-            >
-            of
-            <span class="font-semibold text-gray-900 dark:text-white"
-              >1000</span
-            >
+
           </span>
-          <ul class="inline-flex items-stretch -space-x-px">
-            <li>
-              <a
-                href="#"
-                class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                <span class="sr-only">Previous</span>
-                <svg
-                  class="w-5 h-5"
-                  aria-hidden="true"
-                  fill="currentColor"
-                  viewbox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >1</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >...</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >100</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                <span class="sr-only">Next</span>
-                <svg
-                  class="w-5 h-5"
-                  aria-hidden="true"
-                  fill="currentColor"
-                  viewbox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </a>
-            </li>
-          </ul>
+          <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+            <pagination-controls
+              previousLabel="Prev"
+              nextLabel="Next"
+              (pageChange)="onTableDataChange($event)">
+            </pagination-controls>
+
+
+          </div>
+
         </nav>
       </div>
     </div>
@@ -553,7 +427,7 @@
               id="cquantity"
               [(ngModel)]="product.quantity"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="$2999"
+              placeholder="Product quantity"
               required=""
             />
           </div>

@@ -5,19 +5,29 @@ import { from, Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { SearchPipe } from './search.pipe';
 import { ReadModalComponent } from './Modals/ReadModals/ReadModal/ReadModal.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+
+
 
 
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [NgFor, FormsModule, SearchPipe, ReadModalComponent],
+  imports: [NgFor, FormsModule, SearchPipe, ReadModalComponent,NgxPaginationModule],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css',
 })
 export class InventoryComponent {
+  title = 'pagination';
+  page = 1;
+  count=0;
+  tableSize = 10;
+  tableSizes = [5, 10, 15, 20];
+
   products: any[] = [];
   category: string[] = [];
+  filteredCategories: string[] = [];
   searchText: string = '';
   product: any = {
     id: null,
@@ -29,12 +39,12 @@ export class InventoryComponent {
   };
 
 
-
   ngOnInit(): void {
     this.fetchProducts().subscribe(() => {
       this.filtercat();
-    });
+      this.filterProducts();
 
+    });
   }
   fetchProducts(): Observable<any> {
     return from(
@@ -45,6 +55,37 @@ export class InventoryComponent {
       })
     );
   }
+
+  onTableDataChange(event: any): void {
+    this.page = event;
+    this.fetchProducts();
+  }
+  onTableSizeChange(event: any): void {
+    this.tableSize = event.target.value;
+    this.page = 1;
+    this.fetchProducts();
+  }
+  toggleFilter(category: string) {
+    if (this.filteredCategories.includes(category)) {
+      this.filteredCategories = this.filteredCategories.filter(cat => cat !== category);
+    } else {
+      this.filteredCategories.push(category);
+    }
+    this.filterProducts();
+  }
+  filterProducts() {
+    if (this.filteredCategories.length === 0) {
+      // Si aucune catégorie n'est filtrée, afficher tous les produits
+      this.fetchProducts().subscribe();
+    } else {
+      // Sinon, filtrer les produits en fonction des catégories sélectionnées
+      this.products = this.products.filter(product => this.filteredCategories.includes(product.category));
+    }
+  }
+  isCategoryFiltered(category: string): boolean {
+    return this.filteredCategories.includes(category);
+  }
+
 
   addProduct(product: any) {
     axios
@@ -57,6 +98,7 @@ export class InventoryComponent {
           modal.setAttribute('aria-hidden', 'true');
         }
         this.fetchProducts();
+        this.filtercat();
       })
       .catch((error) => {
         console.error('Error adding product:', error);
@@ -68,6 +110,7 @@ export class InventoryComponent {
       ...new Set(this.products.map((product) => product.category)),
     ]; // Get unique categories
     this.category = uniqueCategories.filter(Boolean); // Remove empty categories
+
     console.log('cat', this.category);
   }
 
@@ -116,6 +159,7 @@ export class InventoryComponent {
         console.error('Error deleting product:', error);
       });
   }
+
 
   toggleDropdown(): void {
     const dropdown = document.getElementById('actionsDropdown');
@@ -174,6 +218,7 @@ export class InventoryComponent {
       modal.setAttribute('aria-hidden', 'true');
     }
   }
+
   toggleDropdown1(index: number): void {
     const dropdown = document.getElementById('product-dropdown-' + index);
     if (dropdown !== null && dropdown.classList.contains('hidden')) {
@@ -242,4 +287,5 @@ export class InventoryComponent {
       modal.setAttribute('aria-hidden', 'true');
     }
   }
+
 }
