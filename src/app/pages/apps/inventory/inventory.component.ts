@@ -8,9 +8,6 @@ import { ReadModalComponent } from './Modals/ReadModals/ReadModal/ReadModal.comp
 import { NgxPaginationModule } from 'ngx-pagination';
 
 
-
-
-
 @Component({
   selector: 'app-inventory',
   standalone: true,
@@ -53,6 +50,7 @@ export class InventoryComponent {
 
         return response.data;
       })
+
     );
   }
 
@@ -99,6 +97,7 @@ export class InventoryComponent {
         }
         this.fetchProducts();
         this.filtercat();
+
       })
       .catch((error) => {
         console.error('Error adding product:', error);
@@ -108,8 +107,8 @@ export class InventoryComponent {
   filtercat(): void {
     const uniqueCategories = [
       ...new Set(this.products.map((product) => product.category)),
-    ]; // Get unique categories
-    this.category = uniqueCategories.filter(Boolean); // Remove empty categories
+    ];
+    this.category = uniqueCategories.filter(Boolean);
 
     console.log('cat', this.category);
   }

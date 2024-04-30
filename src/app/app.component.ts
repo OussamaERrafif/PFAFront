@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { AsidebarComponent } from "./layout/asidebar/asidebar.component";
-import { HomepageComponent } from "./pages/apps/homepage/homepage.component";
+import HomeComponent from './pages/index.page';
 
 
 
@@ -10,7 +10,6 @@ import { HomepageComponent } from "./pages/apps/homepage/homepage.component";
     selector: 'app-root',
     standalone: true,
     template: `
-
 
 
   <router-outlet></router-outlet> `,
@@ -24,6 +23,6 @@ import { HomepageComponent } from "./pages/apps/homepage/homepage.component";
       }
     `,
     ],
-    imports: [RouterOutlet, NavbarComponent, AsidebarComponent, HomepageComponent]
+    imports: [RouterOutlet, NavbarComponent, AsidebarComponent, HomeComponent]
 })
 export class AppComponent {}
