@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SidebarComponent } from "./layout/sidebar.component";
-import { HeaderComponent } from "./layout/header.component";
 import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { AsidebarComponent } from "./layout/asidebar/asidebar.component";
+import { HomepageComponent } from "./pages/apps/homepage/homepage.component";
 
 
 
@@ -11,8 +10,7 @@ import { AsidebarComponent } from "./layout/asidebar/asidebar.component";
     selector: 'app-root',
     standalone: true,
     template: `
-  <app-asidebar></app-asidebar>
-  <app-navbar></app-navbar>
+
 
 
   <router-outlet></router-outlet> `,
@@ -26,6 +24,6 @@ import { AsidebarComponent } from "./layout/asidebar/asidebar.component";
       }
     `,
     ],
-    imports: [RouterOutlet, SidebarComponent, HeaderComponent, NavbarComponent, AsidebarComponent]
+    imports: [RouterOutlet, NavbarComponent, AsidebarComponent, HomepageComponent]
 })
 export class AppComponent {}

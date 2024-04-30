@@ -5,7 +5,7 @@ import { SigninComponent } from "./apps/authentication/signin/signin.component";
 
 
 @Component({
-    selector: 'app-signup',
+    selector: 'app-login',
     standalone: true,
     template: `
    <app-signin></app-signin>
@@ -13,6 +13,6 @@ import { SigninComponent } from "./apps/authentication/signin/signin.component";
     styles: [``],
     imports: [SigninComponent]
 })
-export default class SignupComponent {
+export default class LoginComponent {
 
 }
