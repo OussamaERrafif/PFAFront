@@ -7,21 +7,23 @@ import { SearchPipe } from './search.pipe';
 import { ReadModalComponent } from './Modals/ReadModals/ReadModal/ReadModal.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 
-
-
-
-
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [NgFor, FormsModule, SearchPipe, ReadModalComponent,NgxPaginationModule],
+  imports: [
+    NgFor,
+    FormsModule,
+    SearchPipe,
+    ReadModalComponent,
+    NgxPaginationModule,
+  ],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css',
 })
 export class InventoryComponent {
   title = 'pagination';
   page = 1;
-  count=0;
+  count = 0;
   tableSize = 10;
   tableSizes = [5, 10, 15, 20];
 
@@ -38,12 +40,10 @@ export class InventoryComponent {
     quantity: null,
   };
 
-
   ngOnInit(): void {
     this.fetchProducts().subscribe(() => {
       this.filtercat();
       this.filterProducts();
-
     });
   }
   fetchProducts(): Observable<any> {
@@ -67,7 +67,9 @@ export class InventoryComponent {
   }
   toggleFilter(category: string) {
     if (this.filteredCategories.includes(category)) {
-      this.filteredCategories = this.filteredCategories.filter(cat => cat !== category);
+      this.filteredCategories = this.filteredCategories.filter(
+        (cat) => cat !== category
+      );
     } else {
       this.filteredCategories.push(category);
     }
@@ -79,13 +81,14 @@ export class InventoryComponent {
       this.fetchProducts().subscribe();
     } else {
       // Sinon, filtrer les produits en fonction des catégories sélectionnées
-      this.products = this.products.filter(product => this.filteredCategories.includes(product.category));
+      this.products = this.products.filter((product) =>
+        this.filteredCategories.includes(product.category)
+      );
     }
   }
   isCategoryFiltered(category: string): boolean {
     return this.filteredCategories.includes(category);
   }
-
 
   addProduct(product: any) {
     axios
@@ -108,8 +111,8 @@ export class InventoryComponent {
   filtercat(): void {
     const uniqueCategories = [
       ...new Set(this.products.map((product) => product.category)),
-    ]; // Get unique categories
-    this.category = uniqueCategories.filter(Boolean); // Remove empty categories
+    ];
+    this.category = uniqueCategories.filter(Boolean);
 
     console.log('cat', this.category);
   }
@@ -117,21 +120,22 @@ export class InventoryComponent {
   getProductById(id: number): void {
     console.log('id', id);
     this.getById(id);
-
   }
 
   getById(id: number): void {
-    axios.get<any>(`http://localhost:3000/products/${id}`).then((response) => {
-
-      if (response.status === 200) {
-       console.log('response', response.data);
-        this.product = response.data;
-      } else {
-        console.error('Error fetching product data');
-      }
-    }).catch((error) => {
-      console.error('Error fetching product data:', error);
-    });
+    axios
+      .get<any>(`http://localhost:3000/products/${id}`)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log('response', response.data);
+          this.product = response.data;
+        } else {
+          console.error('Error fetching product data');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching product data:', error);
+      });
   }
   updateProduct(product: any) {
     axios
@@ -140,7 +144,6 @@ export class InventoryComponent {
         console.log('Product updated successfully:', response.data);
         this.hideModal('updateProductModal');
         this.fetchProducts();
-
       })
       .catch((error) => {
         console.error('Error updating product:', error);
@@ -159,7 +162,6 @@ export class InventoryComponent {
         console.error('Error deleting product:', error);
       });
   }
-
 
   toggleDropdown(): void {
     const dropdown = document.getElementById('actionsDropdown');
@@ -191,10 +193,14 @@ export class InventoryComponent {
     const modal = document.getElementById('createProductModal');
     if (modal !== null && modal.classList.contains('hidden')) {
       const nameModal = document.getElementById('cname') as HTMLInputElement;
-      const brandModal = document.getElementById('cbrand')as HTMLInputElement;
-      const priceModal = document.getElementById('cprice')as HTMLInputElement;
-      const categoryModal = document.getElementById('ccategory')as HTMLInputElement;
-      const quantityModal = document.getElementById('cquantity')as HTMLInputElement;
+      const brandModal = document.getElementById('cbrand') as HTMLInputElement;
+      const priceModal = document.getElementById('cprice') as HTMLInputElement;
+      const categoryModal = document.getElementById(
+        'ccategory'
+      ) as HTMLInputElement;
+      const quantityModal = document.getElementById(
+        'cquantity'
+      ) as HTMLInputElement;
       if (nameModal !== null) {
         nameModal.value = '';
       }
@@ -287,5 +293,4 @@ export class InventoryComponent {
       modal.setAttribute('aria-hidden', 'true');
     }
   }
-
 }

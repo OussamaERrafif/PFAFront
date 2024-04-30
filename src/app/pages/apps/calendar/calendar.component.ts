@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { calandarguard } from './calendar.guard';
 
 @Component({
   selector: 'app-calendar',
@@ -9,6 +10,10 @@ import { Component } from '@angular/core';
 })
 export class CalendarComponent {
   isDropdownOpen: boolean = false;
+  constructor(private calandarguard: calandarguard) {
+    this.calandarguard.canActivateChild();
+  }
+
 
   toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
