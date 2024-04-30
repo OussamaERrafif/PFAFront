@@ -7,6 +7,7 @@ import { SecurityComponent } from "./apps/profile/security/security.component";
     selector: 'app-sec',
     standalone: true,
     template: `
+    
     <app-security></app-security>
 
   `,

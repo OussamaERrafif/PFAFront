@@ -1,34 +1,17 @@
-import { Component, OnInit } from "@angular/core";
-
+import { Component, OnInit } from '@angular/core';
+import { dashguard } from './dashboard.guard';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.css',
+  providers: [dashguard],
 })
-export class DashboardComponent implements OnInit{
-  options = {
-    chart: {
-      type: 'line'
-    },
-    series: [{
-      name: 'sales',
-      data: [30,40,35,50,49,60,70,91,125]
-    }],
-    xaxis: {
-      categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
-    }
+export class DashboardComponent {
+  constructor(private router: Router, private dashguard: dashguard) {
+    this.dashguard.canActivateChild();
   }
-
-  async ngOnInit(): Promise<void> {
-    // const apexChart = await import('apexcharts');
-
-    // const chart = new apexChart(document.querySelector("#chart"), this.options);
-
-    // chart.render();
-
-  }
-
 }

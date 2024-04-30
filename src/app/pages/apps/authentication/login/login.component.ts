@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from './AuthService.service';
+import { LoginService } from './LoginService.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -7,14 +7,14 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-signin',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './signin.component.html',
-  styleUrl: './signin.component.css',
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
 })
-export class SigninComponent {
+export class LoginComponent {
   name: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService , private router : Router ) {}
+  constructor(private authService: LoginService , private router : Router ) {}
 
   login(): void {
     this.authService.login(this.name, this.password).subscribe(response => {
