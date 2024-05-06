@@ -9,12 +9,12 @@ import { from } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/admin'; // Your NestJS admin API endpoint
+  private apiUrl = 'http://localhost:3000/auth'; // Your NestJS admin API endpoint
 
   constructor() {}
 
-  login(name: string, password: string): Observable<any> {
-    return from(axios.post(`${this.apiUrl}/login`, { name, password })).pipe(
+  login(username: string, password: string): Observable<any> {
+    return from(axios.post(`${this.apiUrl}/login`, { username, password })).pipe(
       map((response) => {
         this.storeToken(response.data.access_token);
         console.log(

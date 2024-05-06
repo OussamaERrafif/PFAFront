@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import icon from './icon.png';
 
 @Component({
   selector: 'app-navbar',
@@ -7,10 +8,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
   imports: [CommonModule],
-
 })
 export class NavbarComponent {
-
   isProfileMenuOpen: boolean = false;
 
   toggleProfileMenu() {
@@ -23,5 +22,10 @@ export class NavbarComponent {
     if (mobileMenu) {
       mobileMenu.classList.toggle('hidden');
     }
+  }
+
+  signout() {
+    sessionStorage.removeItem('token');
+    console.log('User signed out');
   }
 }
