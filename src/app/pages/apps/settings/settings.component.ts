@@ -1,6 +1,7 @@
 import { Token } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import axios from 'axios';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -10,7 +11,7 @@ import axios from 'axios';
 })
 export class SettingsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router : Router) { }
   //adress object
   address = {
     username : '',
@@ -73,7 +74,10 @@ export class SettingsComponent implements OnInit {
       });
     } else {
       console.error('sessionStorage is not available');
-      console.log(Token)
     }
+  }
+  //update function
+  updateProfile(){
+    this.router.navigate(['/acc']);
   }
 }

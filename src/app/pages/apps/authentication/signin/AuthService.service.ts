@@ -16,7 +16,7 @@ export class AuthService {
   login(username: string, password: string): Observable<any> {
     return from(axios.post(`${this.apiUrl}/login`, { username, password })).pipe(
       map((response) => {
-        this.storeToken(response.data.access_token);
+        this.storeToken(response.data.access_token , response.data.role);
         console.log(
           'Login successful:',
           response.status,
@@ -35,10 +35,11 @@ export class AuthService {
     );
   }
 
-  private storeToken(token: string): void {
+  private storeToken(token: string , role:string): void {
     // Store the token in local storage
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('token', token);
+      sessionStorage.setItem('role', role);
     }
   }
 

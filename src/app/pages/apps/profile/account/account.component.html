@@ -31,32 +31,18 @@
           </h2>
           <form [formGroup]="accountForm" (ngSubmit)="saveChanges()">
             <div class="grid gap-6 text-sm">
-              <div class="grid grid-cols-2 gap-6">
-                <div class="mb-6">
-                  <label for="first_name" class="block text-gray-600"
-                    >First Name</label
-                  >
-                  <input
-                    type="text"
-                    formControlName="firstName"
-                    id="first_name"
-                    placeholder="John"
-                    class="h-10 px-4 border-2 border-gray-300 rounded w-full"
-                  />
-                </div>
-
-                <div class="mb-6">
-                  <label for="last_name" class="block text-gray-600"
-                    >Last Name</label
-                  >
-                  <input
-                    type="text"
-                    formControlName="lastName"
-                    id="last_name"
-                    placeholder="Doe"
-                    class="h-10 px-4 border-2 border-gray-300 rounded w-full"
-                  />
-                </div>
+              <div class="mb-6">
+                <label for="username" class="block text-gray-600"
+                  >Full Name</label
+                >
+                <input
+                  type="text"
+                  formControlName="fullname"
+                  id="username"
+                  placeholder="johndoe"
+                  class="h-10 px-4 border-2 text-black border-gray-300 rounded w-full"
+                  [value]="accountForm.get('fullname')?.value"
+                />
               </div>
 
               <div class="mb-6">
@@ -68,7 +54,7 @@
                   formControlName="username"
                   id="username"
                   placeholder="johndoe"
-                  class="h-10 px-4 border-2 border-gray-300 rounded w-full"
+                  class="h-10 px-4 border-2 text-black border-gray-300 rounded w-full"
                 />
               </div>
 
@@ -80,7 +66,7 @@
                   type="email"
                   formControlName="email"
                   id="email"
-                  class="h-10 px-4 border-2 border-gray-300 rounded w-full"
+                  class="h-10 px-4 border-2 text-black border-gray-300 rounded w-full"
                   placeholder="email@domain.com"
                 />
               </div>
@@ -94,7 +80,7 @@
                   formControlName="address"
                   id="address"
                   placeholder="123 Main St."
-                  class="h-10 px-4 border-2 border-gray-300 rounded w-full"
+                  class="h-10 px-4 border-2 text-black border-gray-300 rounded w-full"
                 />
               </div>
 
@@ -106,7 +92,7 @@
                     formControlName="city"
                     id="city"
                     placeholder="City Name"
-                    class="h-10 px-4 border-2 border-gray-300 rounded w-full"
+                    class="h-10 px-4 border-2 text-black border-gray-300 rounded w-full"
                   />
                 </div>
 
@@ -120,7 +106,7 @@
                       formControlName="country"
                       id="country"
                       placeholder="Country"
-                      class="h-10 px-4 border-2 border-gray-300 rounded w-full pr-10"
+                      class="h-10 px-4 border-2 text-black border-gray-300 rounded w-full pr-10"
                       placeholder="Country"
                     />
                     <!-- SVGs and buttons omitted for brevity -->
@@ -137,7 +123,7 @@
                       formControlName="state"
                       id="state"
                       placeholder="State"
-                      class="h-10 px-4 border-2 border-gray-300 rounded w-full pr-10"
+                      class="h-10 px-4 border-2 text-black border-gray-300 rounded w-full pr-10"
                       placeholder="State"
                     />
                     <!-- SVGs and buttons omitted for brevity -->
@@ -153,7 +139,7 @@
                     formControlName="zipcode"
                     id="zipcode"
                     placeholder="12345"
-                    class="h-10 px-4 border-2 border-gray-300 rounded w-full"
+                    class="h-10 px-4 border-2 text-black border-gray-300 rounded w-full"
                   />
                 </div>
               </div>
