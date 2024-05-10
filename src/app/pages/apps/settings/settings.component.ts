@@ -56,22 +56,41 @@ export class SettingsComponent implements OnInit {
         // You can display an error message in your UI or handle the error in any other way
       });
       //add another endpoint that gets the user status
-      axios.get('http://localhost:3000/auth/status', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(response => {
-        // Handle successful response
-        console.log('stats:', response.data);
-        // You can assign response data to a variable or display it in your UI as needed
-        this.stats = response.data;
-      })
-      .catch(error => {
-        // Handle error
-        console.error('Error fetching data:', error);
-        // You can display an error message in your UI or handle the error in any other way
-      });
+      if(window.sessionStorage.getItem('role') === 'admin'){
+        axios.get(`http://localhost:3000/admin/status`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => {
+          // Handle successful response
+          console.log('stats:', response.data);
+          // You can assign response data to a variable or display it in your UI as needed
+          this.stats = response.data;
+        })
+        .catch(error => {
+          // Handle error
+          console.error('Error fetching data:', error);
+          // You can display an error message in your UI or handle the error in any other way
+        });
+      } else {
+        axios.get(`http://localhost:3000/auth/status`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => {
+          // Handle successful response
+          console.log('stats:', response.data);
+          // You can assign response data to a variable or display it in your UI as needed
+          this.stats = response.data;
+        })
+        .catch(error => {
+          // Handle error
+          console.error('Error fetching data:', error);
+          // You can display an error message in your UI or handle the error in any other way
+        });
+      }
     } else {
       console.error('sessionStorage is not available');
     }

@@ -5,7 +5,7 @@ import { ForgotpasswdComponent } from "./apps/authentication/forgotpasswd/forgot
     selector: 'app-forgotpassword',
     standalone: true,
     template: `
-    <app-forgotpasswd></app-forgotpasswd>
+    <app-forgot-password></app-forgot-password>
 
   `,
     styles: [``],

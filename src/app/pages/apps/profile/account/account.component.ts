@@ -84,7 +84,7 @@ export class AccountComponent implements OnInit {
         });
       //add another endpoint that gets the user status
       axios
-        .get('http://localhost:3000/auth/status', {
+        .get(`http://localhost:3000/${window.sessionStorage.getItem('role')}/status`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -123,6 +123,21 @@ export class AccountComponent implements OnInit {
 
         // Axios POST request to save changes
         //take only the full name and email
+
+        if (window.sessionStorage.getItem('role') === 'admin') {
+          axios.post(
+            'http://localhost:3000/admin/update',
+            {
+              fullname: this.accountForm.value.fullname,
+              email: this.accountForm.value.email,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        } else {
         axios.post(
           'http://localhost:3000/auth/update',
           {
@@ -134,7 +149,7 @@ export class AccountComponent implements OnInit {
               Authorization: `Bearer ${token}`,
             },
           }
-        );
+        );}
 
         //same for adresse
         axios.post(
