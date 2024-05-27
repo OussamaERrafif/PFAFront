@@ -16,16 +16,16 @@
             <tr *ngFor="let log of logs
             let i = index
             " class="border-b border-neutral-200 ">
-              <td class="whitespace-nowrap px-6 py-4 text-black font-medium">{{ log.id }}</td>
-              <td class="whitespace-nowrap px-6 py-4 text-black">{{ log.user }}</td>
-              <td class="whitespace-nowrap px-6 py-4 text-black">{{ log.type }}</td>
-              <td class="whitespace-nowrap px-6 py-4 text-black">{{ log.description }}</td>
-              <td class="whitespace-nowrap px-6 py-4 text-black">
-                <span [ngClass]="{'text-green-600': log.status === 'success' , 'text-red-600': log.status === 'fail'}">
+              <td class="whitespace-nowrap px-6 py-4 text-black font-medium" [ngClass]="{'bg-green-500' :log.status === 'success' , 'bg-red-600': log.status === 'fail'}">{{ log.id }}</td>
+              <td class="whitespace-nowrap px-6 py-4 text-black" [ngClass]="{'bg-green-500' :log.status === 'success' , 'bg-red-600': log.status === 'fail'}">{{ log.user }}</td>
+              <td class="whitespace-nowrap px-6 py-4 text-black" [ngClass]="{'bg-green-500' :log.status === 'success' , 'bg-red-600': log.status === 'fail'}">{{ log.type }}</td>
+              <td class="whitespace-nowrap px-6 py-4 text-black" [ngClass]="{'bg-green-500' :log.status === 'success' , 'bg-red-600': log.status === 'fail'}">{{ log.description }}</td>
+              <td class="whitespace-nowrap px-6 py-4 text-black" [ngClass]="{'bg-green-500' :log.status === 'success' , 'bg-red-600': log.status === 'fail'}">
+                <span class="text-black">
                   {{ log.status }}
                 </span>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-black">{{ log.time }}</td>
+              <td class="whitespace-nowrap px-6 py-4 text-black" [ngClass]="{'bg-green-500' :log.status === 'success' , 'bg-red-600': log.status === 'fail'}">{{ log.time }}</td>
             </tr>
           </tbody>
         </table>
