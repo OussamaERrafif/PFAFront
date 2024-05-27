@@ -3,7 +3,7 @@ import axios from 'axios';
 import { NgFor } from '@angular/common';
 import { from, Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { SearchPipe } from './search.pipe';
+import { SearchPipe1 } from './search.pipe';
 import { ReadModalComponent } from './Modals/ReadModals/ReadModal/ReadModal.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -13,7 +13,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
   imports: [
     NgFor,
     FormsModule,
-    SearchPipe,
+    SearchPipe1,
     ReadModalComponent,
     NgxPaginationModule,
   ],
@@ -27,22 +27,15 @@ export class UserComponent {
   tableSize = 10;
   tableSizes = [5, 10, 15, 20];
 
-  products: any[] = [];
-  category: string[] = [];
-  filteredCategories: string[] = [];
-  searchText: string = '';
-  product: any = {
-    id: null,
-    name: '',
-    brand: '',
-    price: null,
-    category: '',
-    quantity: null,
-  };
 
-  
+  users: any[] = [];
+  role: string[] = [];
+  filteredRoles: string[] = [];
+  searchText: string = '';
+
 
   user = {
+    id:null,
     username: '',
     role: '',
     email: '',
@@ -51,27 +44,59 @@ export class UserComponent {
       street: '',
       city: '',
       state: '',
-      postalCode: '',
+      postalCode: null,
     },
   };
 
   ngOnInit(): void {
     this.fetchUsers().subscribe(() => {
       this.filtercat();
-      this.filterProducts();
+      this.filterUsers();
     });
   }
-  // fetchUsers(): Observable<any> {
-  //   return from(
-  //     axios.get('http://localhost:3000/products').then((response) => {
-  //       this.products = response.data;
-
-  //       return response.data;
-  //     })
-  //   );
-  // }
 
   fetchUsers(): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    const headers = { Authorization: `Bearer ${token}` };
+
+    return from(
+      axios
+        .get('http://localhost:3000/admin/allUsers', { headers })
+        .then((response) => {
+          this.users = response.data.map((user: { id: any; username: any; role: any; email: any; fullname: any; addresses: { street: any; city: any; state: any; postalCode: any; }; }) => ({
+            id: user.id,
+            username: user.username,
+            role: user.role,
+            email: user.email,
+            fullname: user.fullname,
+            addresses: {
+              street: user.addresses?.street || '',
+              city: user.addresses?.city || '',
+              state: user.addresses?.state || '',
+              postalCode: user.addresses?.postalCode || null,
+            },
+          }));
+          this.count = this.users.length;
+          return this.users;
+        })
+        .catch((error) => {
+          console.error('Error fetching users:', error);
+          throw error;
+        })
+    );
+}
+
+  // fetchUsers(): Observable<any> {
+   //  return from(
+     //  axios.get('http://localhost:3000/admin/allUsers').then((response) => {
+       // this.products = response.data;
+
+         //return response.data;
+      //})
+     //);
+   //}
+
+ /* fetchUsers(): Observable<any> {
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
 
@@ -92,9 +117,8 @@ export class UserComponent {
           throw error;
         })
     );
-  }
+  } */
 
-  
 
   onTableDataChange(event: any): void {
     this.page = event;
@@ -105,53 +129,42 @@ export class UserComponent {
     this.page = 1;
     this.fetchUsers();
   }
-  toggleFilter(category: string) {
-    if (this.filteredCategories.includes(category)) {
-      this.filteredCategories = this.filteredCategories.filter(
-        (cat) => cat !== category
+  toggleFilter(role: string) {
+    if (this.filteredRoles.includes(role)) {
+      this.filteredRoles = this.filteredRoles.filter(
+        (role) => role !== role
       );
     } else {
-      this.filteredCategories.push(category);
+      this.filteredRoles.push(role);
     }
-    this.filterProducts();
+    this.filterUsers();
   }
-  filterProducts() {
-    if (this.filteredCategories.length === 0) {
+  filterUsers() {
+    if (this.filteredRoles.length === 0) {
       // Si aucune catégorie n'est filtrée, afficher tous les produits
       this.fetchUsers().subscribe();
     } else {
       // Sinon, filtrer les produits en fonction des catégories sélectionnées
-      this.products = this.products.filter((product) =>
-        this.filteredCategories.includes(product.category)
+      this.users = this.users.filter((user) =>
+        this.filteredRoles.includes(user.role)
       );
     }
   }
-  isCategoryFiltered(category: string): boolean {
-    return this.filteredCategories.includes(category);
+  isRoleFiltered(role: string): boolean {
+    return this.filteredRoles.includes(role);
   }
 
-  addProduct(user: any) {
-    axios
-      .post('http://localhost:3000/admin/createuser', user)
-      .then((response) => {
-        console.log('Product added successfully:', response.data);
-        const modal = document.getElementById('createProductModal');
-        if (modal !== null) {
-          modal.classList.add('hidden');
-          modal.setAttribute('aria-hidden', 'true');
-        }
-        this.fetchUsers();
-        this.filtercat();
-      })
-      .catch((error) => {
-        console.error('Error adding product:', error);
-      });
-  }
 
-  //add user
+
   addUser(user: any) {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      console.error('No token found in sessionStorage');
+      return;
+    }
+    const headers = { Authorization: `Bearer ${token}` };
     axios
-      .post('http://localhost:3000/admin/createuser', user)
+      .post('http://localhost:3000/admin/createuser', user, { headers })
       .then((response) => {
         console.log('User added successfully:', response.data);
         const modal = document.getElementById('createUserModal');
@@ -159,51 +172,73 @@ export class UserComponent {
           modal.classList.add('hidden');
           modal.setAttribute('aria-hidden', 'true');
         }
-        this.fetchUsers();
+
+        // Afficher le mot de passe par défaut dans la console
+        const defaultPassword = response.data.defaultPassword;
+        alert(`User added successfully. Default password: ${defaultPassword}`);
+
+        // Ajouter l'utilisateur au tableau sans recharger la page
+        this.users.push({
+          id: response.data.createdUser.id, // Assurez-vous que `id` est correctement renvoyé par l'API
+          username: user.username,
+          role: user.role,
+          email: user.email,
+          fullname: user.fullname,
+          addresses: {
+            street: user.addresses?.street || '',
+            city: user.addresses?.city || '',
+            state: user.addresses?.state || '',
+            postalCode: user.addresses?.postalCode || null,
+          }
+        });
+        this.count = this.users.length;
       })
       .catch((error) => {
-        console.error('Error adding user:', error);
+        if (error.response) {
+          console.error('Error response:', error.response.data);
+          console.error('Error status:', error.response.status);
+          console.error('Error headers:', error.response.headers);
+        } else if (error.request) {
+          console.error('Error request:', error.request);
+        } else {
+          console.error('Error message:', error.message);
+        }
+        console.error('Error config:', error.config);
       });
   }
 
+
+
+
   filtercat(): void {
-    const uniqueCategories = [
-      ...new Set(this.products.map((product) => product.category)),
+    const uniqueRoles = [
+      ...new Set(this.users.map((user) => user.role)),
     ];
-    this.category = uniqueCategories.filter(Boolean);
+    this.role = uniqueRoles.filter(Boolean);
 
-    console.log('cat', this.category);
+    console.log('role', this.role);
   }
 
-  getProductById(id: string): void {
-    console.log('id', id);
-    this.getById(id);
+  getUserByUsername(username: string): void {
+    console.log('username :', username);
+    this.getUser(username);
   }
-
-  // getById(id: number): void {
-  //   axios
-  //     .get<any>(`http://localhost:3000/products/${id}`)
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         console.log('response', response.data);
-  //         this.product = response.data;
-  //       } else {
-  //         console.error('Error fetching product data');
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching product data:', error);
-  //     });
-  // }
 
   //get user by username
-  getById(username: string): void {
+  getUser(username: string): void {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      console.error('No token found in sessionStorage');
+      // Rediriger vers la page de connexion ou afficher un message d'erreur
+      return;
+    }
+    const headers = { Authorization: `Bearer ${token}` };
     axios
-      .get<any>(`http://localhost:3000/admin/${username}`)
+      .get<any>(`http://localhost:3000/admin/${username}`, { headers })
       .then((response) => {
         if (response.status === 200) {
           console.log('response', response.data);
-          this.user = response.data;
+          this.users = response.data;
         } else {
           console.error('Error fetching user data');
         }
@@ -213,10 +248,18 @@ export class UserComponent {
       });
   }
 
+
   //update user by username
   updateUser(username: string, user: any): void {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      console.error('No token found in sessionStorage');
+      // Rediriger vers la page de connexion ou afficher un message d'erreur
+      return;
+    }
+    const headers = { Authorization: `Bearer ${token}` };
     axios
-      .put(`http://localhost:3000/admin/${username}`, user)
+      .post(`http://localhost:3000/admin/updateUser/${username}`, { headers })
       .then((response) => {
         console.log('User updated successfully:', response.data);
         this.hideModal('updateUserModal');
@@ -230,7 +273,7 @@ export class UserComponent {
   //delete user by username
   deleteUser(username: string): void {
     axios
-      .delete(`http://localhost:3000/admin/${username}`)
+      .delete(`http://localhost:3000/admin/deleteUser/${username}`)
       .then((response) => {
         console.log('User deleted successfully:', response.data);
         this.hideModal('deleteUserModal');
@@ -260,7 +303,7 @@ export class UserComponent {
   }
   // Fonction pour fermer le modal
   closeModal(): void {
-    const modal = document.getElementById('createProductModal');
+    const modal = document.getElementById('createUserModal');
     if (modal !== null) {
       modal.classList.add('hidden');
       modal.setAttribute('aria-hidden', 'true');
@@ -268,31 +311,35 @@ export class UserComponent {
   }
   // Fonction pour afficher ou masquer le modal
   toggleModal(): void {
-    const modal = document.getElementById('createProductModal');
+    const modal = document.getElementById('createUserModal');
     if (modal !== null && modal.classList.contains('hidden')) {
-      const nameModal = document.getElementById('cname') as HTMLInputElement;
-      const brandModal = document.getElementById('cbrand') as HTMLInputElement;
-      const priceModal = document.getElementById('cprice') as HTMLInputElement;
-      const categoryModal = document.getElementById(
-        'ccategory'
+      const nameModal = document.getElementById('cusername') as HTMLInputElement;
+      const fullnameModal = document.getElementById('cfullname') as HTMLInputElement;
+      const emailModal = document.getElementById('cemail') as HTMLInputElement;
+      const cityModal = document.getElementById(
+        'ccity'
       ) as HTMLInputElement;
-      const quantityModal = document.getElementById(
-        'cquantity'
+      const stateModal = document.getElementById(
+        'cstate'
       ) as HTMLInputElement;
+      const roleModal = document.getElementById('crole') as HTMLInputElement;
       if (nameModal !== null) {
         nameModal.value = '';
       }
-      if (brandModal !== null) {
-        brandModal.value = '';
+      if (fullnameModal !== null) {
+        fullnameModal.value = '';
       }
-      if (priceModal !== null) {
-        priceModal.value = '';
+      if (emailModal !== null) {
+        emailModal.value = '';
       }
-      if (categoryModal !== null) {
-        categoryModal.value = '';
+      if (cityModal !== null) {
+        cityModal.value = '';
       }
-      if (quantityModal !== null) {
-        quantityModal.value = '';
+      if (stateModal !== null) {
+        stateModal.value = '';
+      }
+      if (roleModal !== null) {
+        roleModal.value = '';
       }
 
       modal.classList.remove('hidden');
@@ -304,7 +351,7 @@ export class UserComponent {
   }
 
   toggleDropdown1(index: number): void {
-    const dropdown = document.getElementById('product-dropdown-' + index);
+    const dropdown = document.getElementById('user-dropdown-' + index);
     if (dropdown !== null && dropdown.classList.contains('hidden')) {
       dropdown.classList.remove('hidden');
     } else if (dropdown !== null) {
@@ -313,7 +360,7 @@ export class UserComponent {
   }
   // Fonction pour afficher ou masquer le modal
   toggleModalEdit(): void {
-    const modal = document.getElementById('updateProductModal');
+    const modal = document.getElementById('updateUserModal');
     if (modal !== null && modal.classList.contains('hidden')) {
       modal.classList.remove('hidden');
       modal.setAttribute('aria-hidden', 'false');
@@ -324,7 +371,7 @@ export class UserComponent {
   }
   // Fonction pour fermer le modal
   closeModalEdit(): void {
-    const modal = document.getElementById('updateProductModal');
+    const modal = document.getElementById('updateUserModal');
     if (modal !== null) {
       modal.classList.add('hidden');
       modal.setAttribute('aria-hidden', 'true');
@@ -333,7 +380,7 @@ export class UserComponent {
 
   // Fonction pour afficher ou masquer le modal
   toggleModalRead(): void {
-    const modal = document.getElementById('readProductModal');
+    const modal = document.getElementById('readUserModal');
     if (modal !== null && modal.classList.contains('hidden')) {
       modal.classList.remove('hidden');
       modal.setAttribute('aria-hidden', 'false');
@@ -346,7 +393,7 @@ export class UserComponent {
 
   // Fonction pour afficher ou masquer le modal
   toggleModalDelete(): void {
-    const modal = document.getElementById('deleteProductModal');
+    const modal = document.getElementById('deleteUserModal');
     if (modal !== null && modal.classList.contains('hidden')) {
       modal.classList.remove('hidden');
       modal.setAttribute('aria-hidden', 'false');
@@ -357,7 +404,7 @@ export class UserComponent {
   }
   // Fonction pour fermer le modal
   closeModalDelete(): void {
-    const modal = document.getElementById('deleteProductModal');
+    const modal = document.getElementById('deleteUserModal');
     if (modal !== null) {
       modal.classList.add('hidden');
       modal.setAttribute('aria-hidden', 'true');

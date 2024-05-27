@@ -49,7 +49,7 @@
           >
             <button
               type="button"
-              id="createProductModalButton"
+              id="createUserModalButton"
               (click)="toggleModal()"
               class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
             >
@@ -118,7 +118,7 @@
                 <h6
                   class="mb-3 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  role
+                  Role
                 </h6>
                 <ul
                   class="space-y-2 text-sm"
@@ -126,21 +126,21 @@
                 >
                   <li
                     class="flex items-center"
-                    *ngFor="let category of category"
+                    *ngFor="let role of role"
                   >
                     <input
-                      [id]="category"
+                      [id]="role"
                       type="checkbox"
                       value=""
                       class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                      (click)="toggleFilter(category)"
-                      [checked]="isCategoryFiltered(category)"
+                      (click)="toggleFilter(role)"
+                      [checked]="isRoleFiltered(role)"
                     />
                     <label
-                      [for]="category"
+                      [for]="role"
                       class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
                     >
-                      {{ category }}
+                      {{ role }}
                     </label>
                   </li>
                 </ul>
@@ -168,34 +168,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="
-                  let user of user
-                    | search : searchText
-                    | paginate
-                      : {
-                          itemsPerPage: tableSize,
-                          currentPage: page,
-                          totalItems: count
-                        };
-                  let i = index
-                "
-                class="border-b dark:border-gray-700"
-              >
-                <td class="px-4 py-3">{{ i }}</td>
-                <th
-                  scope="row"
-                  class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  {{ user.username }}
-                </th>
+              <tr *ngFor="let user of users | search1: searchText | paginate: { itemsPerPage: tableSize, currentPage: page, totalItems: count }; let i = index" class="border-b dark:border-gray-700">
+                <td class="px-4 py-3">{{ i + 1 }}</td>
+                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ user.username }}</th>
                 <td class="px-4 py-3">{{ user.role }}</td>
                 <td class="px-4 py-3">{{ user.email }}</td>
-                <td class="px-4 py-3 max-w-[12rem] truncate">
-                  {{ user.fullname }}
-                </td>
+                <td class="px-4 py-3 max-w-[12rem] truncate">{{ user.fullname }}</td>
                 <td class="px-4 py-3">
-                  {{ user.addresses?.city || "error" }}, {{ user.addresses?.state || "error" }}
+                  {{ user.addresses.city || 'N/A' }},
+                  {{ user.addresses.state || 'N/A' }}
                 </td>
                 <td class="px-4 py-3 flex items-center justify-end">
                   <button
@@ -217,7 +198,7 @@
                     </svg>
                   </button>
                   <div
-                    id="{{ 'product-dropdown-' + i }}"
+                    id="{{ 'user-dropdown-' + i }}"
                     class="hidden absolute z-10 w-44 mr-20 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 transform translate-x-1/2"
                     style="right: 60px"
                   >
@@ -227,10 +208,10 @@
                         <button
                           type="button"
                           (click)="toggleModalEdit()"
-                          (click)="getProductById(user.username)"
-                          (click)="hideModal('product-dropdown-' + i)"
-                          data-modal-target="updateProductModal"
-                          data-modal-toggle="updateProductModal"
+                          (click)="getUserByUsername(user.username)"
+                          (click)="hideModal('user-dropdown-' + i)"
+                          data-modal-target="updateUserModal"
+                          data-modal-toggle="updateUserModal"
                           class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-gray-700 dark:text-gray-200"
                         >
                           <svg
@@ -256,10 +237,10 @@
                         <button
                           type="button"
                           (click)="toggleModalDelete()"
-                          (click)="getProductById(user.username)"
-                          (click)="hideModal('product-dropdown-' + i)"
-                          data-modal-target="deleteProductModal"
-                          data-modal-toggle="deleteProductModal"
+                          (click)="getUserByUsername(user.username)"
+                          (click)="hideModal('user-dropdown-' + i)"
+                          data-modal-target="deleteUserModal"
+                          data-modal-toggle="deleteUserModal"
                           class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400"
                         >
                           <svg
@@ -307,9 +288,12 @@
   </section>
 </div>
 <!-- End block -->
+
+
+
 <!-- Create modal -->
 <div
-  id="createProductModal"
+  id="createUserModal"
   tabindex="-1"
   aria-hidden="true"
   class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
@@ -324,14 +308,14 @@
         class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
       >
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          Add Product
+          Add User
         </h3>
         <button
           type="button"
           (click)="closeModal()"
           class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-          data-modal-target="createProductModal"
-          data-modal-toggle="createProductModal"
+          data-modal-target="createUserModal"
+          data-modal-toggle="createUserModal"
         >
           <svg
             aria-hidden="true"
@@ -352,88 +336,98 @@
         </button>
       </div>
       <!-- Modal body -->
-      <form (submit)="addUser(user)">
+      <form (ngSubmit)="addUser(user)">
         <div class="grid gap-4 mb-4 sm:grid-cols-2">
           <div>
             <label
               for="name"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >username</label
+              >Username</label
             >
             <input
               type="text"
-              name="cname"
-              id="cname"
+              name="cusername"
+              id="cusername"
               value=""
               [(ngModel)]="user.username"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Type product name"
+              placeholder="User username"
               required=""
             />
           </div>
           <div>
             <label
-              for="brand"
+              for="fullname"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >fullname</label
+              >Full name</label
             >
             <input
               type="text"
-              name="cbrand"
-              id="cbrand"
+              name="cfullname"
+              id="cfullname"
               [(ngModel)]="user.fullname"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Product brand"
+              placeholder="User fullname"
               required=""
             />
           </div>
           <div>
             <label
-              for="price"
+              for="email"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >email</label
+              >Email</label
             >
             <input
-              type="number"
-              name="price"
-              id="cprice"
+              type="email"
+              name="cemail"
+              id="cemail"
               [(ngModel)]="user.email"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="$2999"
+              placeholder="xxxx@xxxx.xxx"
               required=""
             />
           </div>
           <div>
             <label
-              for="category"
+              for="city"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >city</label
+              >City</label
             ><input
               type="text"
-              name="ccategory"
-              id="ccategory"
+              name="ccity"
+              id="ccity"
               [(ngModel)]="user.addresses.city"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Product category"
+              placeholder="User city"
               required=""
             />
           </div>
           <div class="sm:col-span-2">
             <label
-              for="quantity"
+              for="state"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >state</label
+              >State</label
             ><input
-              type="number"
-              name="cquantity"
-              id="cquantity"
+              type="text"
+              name="cstate"
+              id="cstate"
               [(ngModel)]="user.addresses.state"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Product quantity"
+              placeholder="User state"
               required=""
             />
           </div>
+          <div>
+            <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
+            <select id="crole" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" [(ngModel)]="user.role" name="crole">
+                <option [ngValue]="null" disabled selected>Select role</option>
+                <option [ngValue]="'admin'">Admin</option>
+                <option [ngValue]="'employee'">Employee</option>
+            </select>
         </div>
+
+        </div>
+
         <button
           type="submit"
           class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
@@ -456,9 +450,10 @@
     </div>
   </div>
 </div>
+
 <!-- Update modal -->
 <div
-  id="updateProductModal"
+  id="updateUserModal"
   tabindex="-1"
   aria-hidden="true"
   class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
@@ -473,13 +468,13 @@
         class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600"
       >
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          Update Product
+          Update User
         </h3>
         <button
           type="button"
           (click)="closeModalEdit()"
           class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-          data-modal-toggle="updateProductModal"
+          data-modal-toggle="updateUserModal"
         >
           <svg
             aria-hidden="true"
@@ -498,26 +493,26 @@
         </button>
       </div>
       <!-- Modal body -->
-      <form (submit)="updateUser(user.username , user)">
+      <form (submit)="updateUser(user.username,user)">
         <div class="grid gap-4 mb-4 sm:grid-cols-2">
           <div>
             <label
               for="name"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >username</label
+              >Username</label
             >
-            <!-- <input
+           <input
               type="text"
               name="id"
               id="id"
               value=""
-              [(ngModel)]="user.username"
+              [(ngModel)]="user.id"
               class="hidden"
-            /> -->
+            />
             <input
               type="text"
-              name="name"
-              id="name"
+              name="username"
+              id="username"
               value=""
               [(ngModel)]="user.username"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -528,12 +523,12 @@
             <label
               for="brand"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >fullname</label
+              >Fullname</label
             >
             <input
               type="text"
-              name="brand"
-              id="brand"
+              name="fullname"
+              id="fullname"
               value=""
               [(ngModel)]="user.fullname"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -544,13 +539,13 @@
             <label
               for="price"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >email</label
+              >Email</label
             >
             <input
-              type="number"
+              type="email"
               value=""
-              name="price"
-              id="price"
+              name="email"
+              id="email"
               [(ngModel)]="user.email"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               placeholder=""
@@ -558,13 +553,13 @@
           </div>
           <div>
             <label
-              for="category"
+              for="city"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >city</label
+              >City</label
             ><input
               type="text"
-              name="category"
-              id="category"
+              name="city"
+              id="city"
               [(ngModel)]="user.addresses.city"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               placeholder=""
@@ -573,19 +568,27 @@
           </div>
           <div class="sm:col-span-2">
             <label
-              for="quantity"
+              for="state"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >state</label
+              >State</label
             ><input
-              type="number"
-              name="quantity"
-              id="quantity"
+              type="text"
+              name="city"
+              id="city"
               [(ngModel)]="user.addresses.state"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               placeholder=""
               required=""
             />
           </div>
+          <div>
+            <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
+            <select id="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" [(ngModel)]="user.role" name="role">
+                <option [ngValue]="null" disabled selected>Select role</option>
+                <option [ngValue]="'admin'">Admin</option>
+                <option [ngValue]="'employee'">Employee</option>
+            </select>
+        </div>
         </div>
         <div class="flex items-center space-x-4">
           <button
@@ -603,7 +606,7 @@
 <app-read-modal></app-read-modal>
 <!-- Delete modal -->
 <div
-  id="deleteProductModal"
+  id="deleteUserModal"
   tabindex="-1"
   aria-hidden="true"
   class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full"
@@ -657,11 +660,11 @@
             name="deleteId"
             id="deleteId"
             value=""
-            [(ngModel)]="product.id"
+            [(ngModel)]="user.username"
             class="hidden"
           />
           <button
-            data-modal-toggle="deleteProductModal"
+            data-modal-toggle="deleteUserModal"
             type="button"
             (click)="closeModalDelete()"
             class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
