@@ -234,7 +234,7 @@ export class UserComponent {
     }
     const headers = { Authorization: `Bearer ${token}` };
     axios
-      .get<any>(`http://localhost:3000/admin/${username}`, { headers })
+      .get<any>(`http://localhost:3000/admin/getUser/${username}`, { headers })
       .then((response) => {
         if (response.status === 200) {
           console.log('response', response.data);
@@ -259,7 +259,7 @@ export class UserComponent {
     }
     const headers = { Authorization: `Bearer ${token}` };
     axios
-      .post(`http://localhost:3000/admin/updateUser/${username}`, { headers })
+      .post(`http://localhost:3000/admin/updateuser/${username}`,user, { headers })
       .then((response) => {
         console.log('User updated successfully:', response.data);
         this.hideModal('updateUserModal');
@@ -270,10 +270,12 @@ export class UserComponent {
       });
   }
 
+  
+
   //delete user by username
   deleteUser(username: string): void {
     axios
-      .delete(`http://localhost:3000/admin/deleteUser/${username}`)
+      .delete(`http://localhost:3000/admin/deleteuser/${username}`)
       .then((response) => {
         console.log('User deleted successfully:', response.data);
         this.hideModal('deleteUserModal');
