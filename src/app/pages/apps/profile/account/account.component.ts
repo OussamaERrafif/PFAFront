@@ -48,6 +48,8 @@ export class AccountComponent implements OnInit {
     email: '',
   };
 
+  ral =window.sessionStorage.getItem('role');
+
   ngOnInit(): void {
     // Check if sessionStorage is available (in the browser environment)
     if (typeof window !== 'undefined' && window.sessionStorage) {
@@ -83,8 +85,14 @@ export class AccountComponent implements OnInit {
           // You can display an error message in your UI or handle the error in any other way
         });
       //add another endpoint that gets the user status
+      role: '';
+      if (this.ral === 'admin') {
+        this.ral = 'admin';
+      }else{
+        this.ral = 'auth';
+      }
       axios
-        .get(`http://localhost:3000/${window.sessionStorage.getItem('role')}/status`, {
+        .get(`http://localhost:3000/${this.ral}/status`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -92,7 +100,7 @@ export class AccountComponent implements OnInit {
         .then((response) => {
           // Handle successful response
           console.log('stats:', response.data);
-          // You can assign response data to a variable or display it in your UI as needed
+          // You can assign response data to a variable or dispay it in your UI as needed
           this.stats = response.data;
           this.accountForm.patchValue({
             fullname: this.stats.fullname,

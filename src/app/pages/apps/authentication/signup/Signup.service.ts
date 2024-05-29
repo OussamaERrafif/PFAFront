@@ -26,7 +26,7 @@ export class SignupService {
         }),
         catchError((error) => {
             // Handle signup errors
-            console.error('Signup failed:', error);
+            
             throw error;
         })
         );

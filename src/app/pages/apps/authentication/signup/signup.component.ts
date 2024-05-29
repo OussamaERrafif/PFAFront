@@ -14,7 +14,11 @@ import { Router } from '@angular/router';
 export class SignupComponent {
   signupForm: FormGroup;
 
-  constructor(private fb: FormBuilder , private signupService: SignupService , private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private signupService: SignupService,
+    private router: Router
+  ) {
     this.signupForm = this.fb.group({
       fullName: [
         '',
@@ -39,17 +43,20 @@ export class SignupComponent {
 
   signup(): void {
     if (this.signupForm.valid) {
-      this.signupService.signup(
-        this.signupForm.value.fullName,
-        this.signupForm.value.userName,
-        this.signupForm.value.email,
-        this.signupForm.value.password
-      );
-      this.router.navigate(['/login']);
-      console.log('Form submitted:', this.signupForm.value);
+      try {
+        this.signupService.signup(
+          this.signupForm.value.fullName,
+          this.signupForm.value.userName,
+          this.signupForm.value.email,
+          this.signupForm.value.password
+        );
+        this.router.navigate(['/login']);
+        console.log('Form submitted:', this.signupForm.value);
+      } catch (error) {
+        window.alert('Error signing up');
+      }
     } else {
-      console.log('Form is invalid');
+      window.alert('Form is not valid');
     }
   }
-  
 }

@@ -173,13 +173,12 @@ export class UserComponent {
           modal.setAttribute('aria-hidden', 'true');
         }
 
-        // Afficher le mot de passe par défaut dans la console
-        const defaultPassword = response.data.defaultPassword;
-        alert(`User added successfully. Default password: ${defaultPassword}`);
+        // // Afficher le mot de passe par défaut dans la console
+        // const defaultPassword = response.data.defaultPassword;
+        // alert(`User added successfully. Default password: ${defaultPassword}`);
 
         // Ajouter l'utilisateur au tableau sans recharger la page
         this.users.push({
-          id: response.data.createdUser.id, // Assurez-vous que `id` est correctement renvoyé par l'API
           username: user.username,
           role: user.role,
           email: user.email,
@@ -194,16 +193,17 @@ export class UserComponent {
         this.count = this.users.length;
       })
       .catch((error) => {
-        if (error.response) {
-          console.error('Error response:', error.response.data);
-          console.error('Error status:', error.response.status);
-          console.error('Error headers:', error.response.headers);
-        } else if (error.request) {
-          console.error('Error request:', error.request);
-        } else {
-          console.error('Error message:', error.message);
-        }
-        console.error('Error config:', error.config);
+        // if (error.response) {
+        //   console.error('Error response:', error.response.data);
+        //   console.error('Error status:', error.response.status);
+        //   console.error('Error headers:', error.response.headers);
+        // } else if (error.request) {
+        //   console.error('Error request:', error.request);
+        // } else {
+        //   console.error('Error message:', error.message);
+        // }
+        // console.error('Error config:', error.config);
+        window.alert('Error adding user. Please try again later.');
       });
   }
 
@@ -274,6 +274,7 @@ export class UserComponent {
 
   //delete user by username
   deleteUser(username: string): void {
+    console.log('username :', username);
     axios
       .delete(`http://localhost:3000/admin/deleteuser/${username}`)
       .then((response) => {
