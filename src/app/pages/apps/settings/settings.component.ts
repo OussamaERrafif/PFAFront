@@ -7,26 +7,32 @@ import { Router } from '@angular/router';
   selector: 'app-settings',
   standalone: true,
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent implements OnInit {
-
-  constructor(private router : Router) { }
+  constructor(private router: Router) {}
   //adress object
   address = {
-    username : '',
+    username: '',
     street: '',
     city: '',
     state: '',
     postalCode: '',
   };
   stats = {
-    role : '',
-    id : 0,
-    username : '',
-    fullname : '',
-    email : ''
-}
+    role: '',
+    id: 0,
+    username: '',
+    fullname: '',
+    email: '',
+  };
+  billings = {
+    username: '',
+    cardNumber: '',
+    cardHolder: '',
+    expirationDate: '',
+    cvc: '',
+  };
 
   ngOnInit(): void {
     // Check if sessionStorage is available (in the browser environment)
@@ -39,64 +45,67 @@ export class SettingsComponent implements OnInit {
       }
 
       // Axios GET request to fetch data
-      axios.get('http://localhost:3000/Adresse/Read', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(response => {
-        // Handle successful response
-        console.log('Data:', response.data);
-        // You can assign response data to a variable or display it in your UI as needed
-        this.address = response.data;
-      })
-      .catch(error => {
-        // Handle error
-        console.error('Error fetching data:', error);
-        // You can display an error message in your UI or handle the error in any other way
-      });
+      axios
+        .get('http://localhost:3000/Adresse/Read', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          // Handle successful response
+          console.log('Data:', response.data);
+          // You can assign response data to a variable or display it in your UI as needed
+          this.address = response.data;
+        })
+        .catch((error) => {
+          // Handle error
+          console.error('Error fetching data:', error);
+          // You can display an error message in your UI or handle the error in any other way
+        });
       //add another endpoint that gets the user status
-      if(window.sessionStorage.getItem('role') === 'admin'){
-        axios.get(`http://localhost:3000/admin/status`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then(response => {
-          // Handle successful response
-          console.log('stats:', response.data);
-          // You can assign response data to a variable or display it in your UI as needed
-          this.stats = response.data;
-        })
-        .catch(error => {
-          // Handle error
-          console.error('Error fetching data:', error);
-          // You can display an error message in your UI or handle the error in any other way
-        });
+      if (window.sessionStorage.getItem('role') === 'admin') {
+        axios
+          .get(`http://localhost:3000/admin/status`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            // Handle successful response
+            console.log('stats:', response.data);
+            // You can assign response data to a variable or display it in your UI as needed
+            this.stats = response.data;
+          })
+          .catch((error) => {
+            // Handle error
+            console.error('Error fetching data:', error);
+            // You can display an error message in your UI or handle the error in any other way
+          });
       } else {
-        axios.get(`http://localhost:3000/auth/status`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        .then(response => {
-          // Handle successful response
-          console.log('stats:', response.data);
-          // You can assign response data to a variable or display it in your UI as needed
-          this.stats = response.data;
-        })
-        .catch(error => {
-          // Handle error
-          console.error('Error fetching data:', error);
-          // You can display an error message in your UI or handle the error in any other way
-        });
+        axios
+          .get(`http://localhost:3000/auth/status`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            // Handle successful response
+            console.log('stats:', response.data);
+            // You can assign response data to a variable or display it in your UI as needed
+            this.stats = response.data;
+          })
+          .catch((error) => {
+            // Handle error
+            console.error('Error fetching data:', error);
+            // You can display an error message in your UI or handle the error in any other way
+          });
       }
     } else {
       console.error('sessionStorage is not available');
     }
   }
   //update function
-  updateProfile(){
+  updateProfile() {
     this.router.navigate(['/acc']);
   }
 }
