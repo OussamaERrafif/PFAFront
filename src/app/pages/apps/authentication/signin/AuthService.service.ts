@@ -30,9 +30,7 @@ export class AuthService {
         catchError((error) => {
             // Handle login errors
             console.error('Login failed:', error);
-            if (error.response && error.response.status === 401) {
-                window.alert('Invalid credentials');
-            }
+            
             throw error;
         })
     );
