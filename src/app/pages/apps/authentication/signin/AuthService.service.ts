@@ -15,25 +15,28 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return from(axios.post(`${this.apiUrl}/login`, { username, password })).pipe(
-      map((response) => {
-        this.storeToken(response.data.access_token , response.data.role);
-        console.log(
-          'Login successful:',
-          response.status,
-          'access_token:',
-          response.data.access_token,
-          'response:',
-          response.data
-        );
-        return response.data;
-      }),
-      catchError((error) => {
-        // Handle login errors
-        console.error('Login failed:', error);
-        throw error;
-      })
+        map((response) => {
+            this.storeToken(response.data.access_token, response.data.role);
+            console.log(
+                'Login successful:',
+                response.status,
+                'access_token:',
+                response.data.access_token,
+                'response:',
+                response.data
+            );
+            return response.data;
+        }),
+        catchError((error) => {
+            // Handle login errors
+            console.error('Login failed:', error);
+            if (error.response && error.response.status === 401) {
+                window.alert('Invalid credentials');
+            }
+            throw error;
+        })
     );
-  }
+}
 
   private storeToken(token: string , role:string): void {
     // Store the token in local storage
