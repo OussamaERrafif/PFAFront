@@ -191,6 +191,7 @@ export class UserComponent {
           }
         });
         this.count = this.users.length;
+        this.onSuccess();
       })
       .catch((error) => {
         // if (error.response) {
@@ -204,7 +205,35 @@ export class UserComponent {
         // }
         // console.error('Error config:', error.config);
         window.alert('Error adding user. Please try again later.');
+        this.onError();
       });
+  }
+  showToast(type: 'success' | 'warning') {
+    const toastId = type === 'success' ? 'toast-success' : 'toast-warning';
+    const toast = document.getElementById(toastId);
+    if (toast) {
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        this.closeToast(toastId);
+      }, 5000); // Auto-hide after 5 seconds
+    }
+  }
+
+  closeToast(toastId: string) {
+    const toast = document.getElementById(toastId);
+    if (toast) {
+      toast.classList.add('hidden');
+    }
+  }
+
+  // Example method to show success toast
+  onSuccess() {
+    this.showToast('success');
+  }
+
+  // Example method to show warning toast
+  onError() {
+    this.showToast('warning');
   }
 
 
@@ -264,9 +293,11 @@ export class UserComponent {
         console.log('User updated successfully:', response.data);
         this.hideModal('updateUserModal');
         this.fetchUsers();
+        this.onSuccess();
       })
       .catch((error) => {
         console.error('Error updating user:', error);
+        this.onError();
       });
   }
 
@@ -281,9 +312,11 @@ export class UserComponent {
         console.log('User deleted successfully:', response.data);
         this.hideModal('deleteUserModal');
         this.fetchUsers();
+        this.onSuccess();
       })
       .catch((error) => {
         console.error('Error deleting user:', error);
+        this.onError();
       });
   }
 

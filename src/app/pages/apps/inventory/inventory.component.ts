@@ -56,6 +56,34 @@ export class InventoryComponent {
     );
   }
 
+  showToast(type: 'success' | 'warning') {
+    const toastId = type === 'success' ? 'toast-success' : 'toast-warning';
+    const toast = document.getElementById(toastId);
+    if (toast) {
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        this.closeToast(toastId);
+      }, 5000); // Auto-hide after 5 seconds
+    }
+  }
+
+  closeToast(toastId: string) {
+    const toast = document.getElementById(toastId);
+    if (toast) {
+      toast.classList.add('hidden');
+    }
+  }
+
+  // Example method to show success toast
+  onSuccess() {
+    this.showToast('success');
+  }
+
+  // Example method to show warning toast
+  onError() {
+    this.showToast('warning');
+  }
+
   onTableDataChange(event: any): void {
     this.page = event;
     this.fetchProducts();
@@ -102,9 +130,11 @@ export class InventoryComponent {
         }
         this.fetchProducts();
         this.filtercat();
+        this.onSuccess();
       })
       .catch((error) => {
         console.error('Error adding product:', error);
+        this.onError();
       });
   }
 
@@ -144,9 +174,11 @@ export class InventoryComponent {
         console.log('Product updated successfully:', response.data);
         this.hideModal('updateProductModal');
         this.fetchProducts();
+        this.onSuccess();
       })
       .catch((error) => {
         console.error('Error updating product:', error);
+        this.onError();
       });
   }
 
@@ -157,9 +189,11 @@ export class InventoryComponent {
         console.log('Product deleted successfully:', response.data);
         this.hideModal('deleteProductModal');
         this.fetchProducts();
+        this.onSuccess();
       })
       .catch((error) => {
         console.error('Error deleting product:', error);
+        this.onError();
       });
   }
 
